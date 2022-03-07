@@ -4,8 +4,13 @@
 import * as React from 'react'
 
 function Greeting({initialName = ''}) {
+
+  // using a function here allows it to only be called once
+  // on additional renderings the initial value is not called
+  // only need to use a function if calling an expensive operation 
+  // not needed if just using initialName prop
   const [name, setName] = React.useState(
-    window.localStorage.getItem('name') || initialName
+    () => window.localStorage.getItem('name') || initialName
   )
 
   React.useEffect(() => {
