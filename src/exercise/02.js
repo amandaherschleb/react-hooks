@@ -13,13 +13,15 @@ function Greeting({initialName = ''}) {
     () => window.localStorage.getItem('name') || initialName
   )
 
+  // useEffect runs everytime a re-render happens if called without second arg
   React.useEffect(() => {
     window.localStorage.setItem('name', name)
-  })
+  }, [name]) // now only called when name changes
 
   function handleChange(event) {
     setName(event.target.value)
   }
+  
   return (
     <div>
       <form>
