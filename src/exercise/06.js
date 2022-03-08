@@ -6,6 +6,7 @@ import * as React from 'react'
 import {PokemonForm, PokemonInfoFallback, PokemonDataView, fetchPokemon} from '../pokemon'
 
 function PokemonInfo({pokemonName}) {
+  const [status, setStatus] = React.useState('idle')
   const [pokemon, setPokemon] = React.useState(null)
   const [error, setError] = React.useState(null)
 
@@ -14,35 +15,35 @@ function PokemonInfo({pokemonName}) {
       return
     }
 
-    // to get loading state clear current pokemon before fetching
-    setPokemon(null)
-    setError(null)
+    setStatus('pending')
 
     fetchPokemon(pokemonName).then(
       pokemonData => {
         setPokemon(pokemonData)
+        setStatus('resolved')
       },
       error => {
         setError(error)
+        setStatus('rejected')
       }
     )
   }, [pokemonName])
 
-  if (error) {
+   if (status === 'idle') {
+    return 'Submit a pokemon'
+  } else if (status === 'pending') {
+    return <PokemonInfoFallback name={pokemonName} />
+  } else if (status === 'rejected') {
     return (
       <div role="alert">
         There was an error: <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
       </div>
     )
-  }
-
-  if (!pokemonName) {
-    return 'Submit a pokemon'
-  } else if (!pokemon) {
-    return <PokemonInfoFallback name={pokemonName} />
-  } else {
+  } else if (status === 'resolved') {
     return <PokemonDataView pokemon={pokemon} />
   }
+
+  throw new Error('This should not be possible')
 }
 
 function App() {
