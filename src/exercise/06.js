@@ -6,25 +6,35 @@ import * as React from 'react'
 import {PokemonForm, PokemonInfoFallback, PokemonDataView, fetchPokemon} from '../pokemon'
 
 function PokemonInfo({pokemonName}) {
-  const [status, setStatus] = React.useState('idle')
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState(null)
+  // in the future, useReducer would probably be a better solution than one state object
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null
+  })
+
+  const {status, pokemon, error} = state
 
   React.useEffect(() => {
     if (!pokemonName) {
       return
     }
 
-    setStatus('pending')
+    // NOTE: all other keys of state are removed with this update
+    setState({status: 'pending'})
 
     fetchPokemon(pokemonName).then(
-      pokemonData => {
-        setPokemon(pokemonData)
-        setStatus('resolved')
+      pokemon => {
+        setState({
+          pokemon,
+          status: 'resolved'
+        })
       },
       error => {
-        setError(error)
-        setStatus('rejected')
+        setState({
+          error,
+          status: 'rejected'
+        })
       }
     )
   }, [pokemonName])
