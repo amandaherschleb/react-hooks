@@ -67,7 +67,7 @@ function PokemonInfo({pokemonName}) {
     // error boundary will catch this
     throw error
   } else if (status === 'resolved') {
-    return <PokemonDataView pokemon={null} /> // forcing an error by sending null here
+    return <PokemonDataView pokemon={pokemon} />
   }
 
   throw new Error('This should not be possible')
@@ -94,7 +94,8 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
+        {/* sending in a key allows ErrorBoundary to unmount and remount to reset error state */}
+        <ErrorBoundary key={pokemonName} FallbackComponent={ErrorFallback}>
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>
