@@ -2,20 +2,11 @@
 // http://localhost:3000/isolated/exercise/04.js
 
 import * as React from 'react'
+import { useLocalStorageState } from '../utils'
 
 function Board() {
   const initialSquares = Array(9).fill(null)
-  const [squares, setSquares] = React.useState(
-    // returning a function only makes the call to get initial value on initial render not every render
-    () => {
-      return JSON.parse(window.localStorage.getItem('squares')) || initialSquares
-    }
-  )
-
-  // save to state when squares change
-  React.useEffect(() => {
-    window.localStorage.setItem('squares', JSON.stringify(squares))
-  }, [squares])
+  const [squares, setSquares] = useLocalStorageState('squares', initialSquares)
 
   const nextValue = calculateNextValue(squares)
   const winner = calculateWinner(squares)
