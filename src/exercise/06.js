@@ -82,7 +82,8 @@ function App() {
       <hr />
       <div className="pokemon-info">
         {/* onReset is called when the resetErrorBoundary is called */}
-        <ErrorBoundary key={pokemonName} FallbackComponent={ErrorFallback} onReset={handleReset}>
+        {/* resetkeys - when pokemon name changes the error boundary will reset itself and attempt to render children again */}
+        <ErrorBoundary key={pokemonName} FallbackComponent={ErrorFallback} onReset={handleReset} resetKeys={[pokemonName]}>
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>
