@@ -9,7 +9,7 @@ import {PokemonForm, PokemonInfoFallback, PokemonDataView, fetchPokemon} from '.
 function PokemonInfo({pokemonName}) {
   // in the future, useReducer would probably be a better solution than one state object
   const [state, setState] = React.useState({
-    status: 'idle',
+    status: pokemonName ? 'pending' : 'idle',
     pokemon: null,
     error: null
   })
@@ -54,11 +54,13 @@ function PokemonInfo({pokemonName}) {
   throw new Error('This should not be possible')
 }
 
-function ErrorFallback({error}) {
+// react-error-boundary gives fallback component extra props
+function ErrorFallback({error, resetErrorBoundary}) {
   return (
     <div role="alert">
       There was an error:{' '}
       <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   )
 }
@@ -70,13 +72,17 @@ function App() {
     setPokemonName(newPokemonName)
   }
 
+  function handleReset() {
+    setPokemonName('')
+  }
+
   return (
     <div className="pokemon-info-app">
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        {/* sending in a key allows ErrorBoundary to unmount and remount to reset error state */}
-        <ErrorBoundary key={pokemonName} FallbackComponent={ErrorFallback}>
+        {/* onReset is called when the resetErrorBoundary is called */}
+        <ErrorBoundary key={pokemonName} FallbackComponent={ErrorFallback} onReset={handleReset}>
           <PokemonInfo pokemonName={pokemonName} />
         </ErrorBoundary>
       </div>
